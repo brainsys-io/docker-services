@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      TZ: {{ watchtower_tz | default("Europe/Paris") }}
+{% if watchtower_notifications is defined %}
+      WATCHTOWER_NOTIFICATIONS: {{ watchtower_notifications }}
+      WATCHTOWER_NOTIFICATION_URL: {{ watchtower_notifications_url }}
+{% endif %}
+      WATCHTOWER_SCHEDULE: "{{ watchtower_schedule | default('0 0 3 * * *') }}"
+      WATCHTOWER_CLEANUP: "{{ watchtower_cleanup | default('true') }}"
+      WATCHTOWER_DEBUG: {{ watchtower_debug | default('"false"') }}
+{% if watchtower_http_api_metrics is defined %}
+      WATCHTOWER_HTTP_API_METRICS: "{{ watchtower_http_api_metrics }}"
+      WATCHTOWER_HTTP_API_TOKEN: "{{ watchtower_http_api_token | default('changeme_') }}"
+{% endif %}

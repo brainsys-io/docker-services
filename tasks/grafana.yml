@@ -1,0 +1,67 @@
+---
+- name: grafana | check vars are defined
+  assert:
+    that:
+      - grafana_admin_password is defined
+      - grafana_auth_anonymous_org_role is defined
+      - grafana_auth_anonymous_org_name is defined
+      - grafana_domain is defined
+  tags: ['docker_grafana']
+
+- include_tasks: base.yml
+  tags: ['docker_grafana']
+
+- name: grafana | create docker volume data
+  docker_volume:
+    name: grafana__var_lib_grafana
+  tags: ['docker_grafana']
+
+- name: grafana | create provisioning dashboards docker volume
+  docker_volume:
+    name: grafana__etc_grafana_provisioning_dashboards
+  tags: ['docker_grafana']
+
+- name: grafana | create provisioning datasources docker volume
+  docker_volume:
+    name: grafana__etc_grafana_provisioning_datasources
+  tags: ['docker_grafana']
+
+#- name: grafana | ensure data perms
+#  file:
+#    path: '{{ item }}'
+#    owner: '472'
+#    group: '472'
+#    state: directory
+#  with_items:
+#  - '{{ register_docker_volume_grafana__var_lib_grafana.ansible_facts.docker_volume.Mountpoint }}'
+#  - '{{ register_docker_volume_grafana__var_lib_grafana.ansible_facts.docker_volume.Mountpoint }}/dashboards'
+#  - '{{ register_docker_volume_grafana__etc_grafana_provisioning_dashboards.ansible_facts.docker_volume.Mountpoint }}'
+#  - '{{ register_docker_volume_grafana__etc_grafana_provisioning_datasources.ansible_facts.docker_volume.Mountpoint }}'
+#  notify: 'docker restart grafana'
+#  tags: ['grafana']
+#
+#- name: grafana | configure provisionning dashboards
+#  copy:
+#    dest: '{{ register_docker_volume_grafana__etc_grafana_provisioning_dashboards.ansible_facts.docker_volume.Mountpoint }}/local.yml'
+#    content: |
+#      {{ grafana_provisionning_dashboards|to_nice_yaml }}
+#  notify: 'docker restart grafana'
+#  tags: ['grafana']
+#
+#- name: grafana | configure provisionning datasources
+#  copy:
+#    dest: '{{ register_docker_volume_grafana__etc_grafana_provisioning_datasources.ansible_facts.docker_volume.Mountpoint }}/datasources.yml'
+#    content: |
+#      {{ grafana_provisionning_datasources|to_nice_yaml }}
+#  notify: 'docker restart grafana'
+#  tags: ['grafana']
+#
+#- name: grafana | download dashboard
+#  get_url:
+#    url: '{{ item.url }}'
+#    dest: '{{ register_docker_volume_grafana__var_lib_grafana.ansible_facts.docker_volume.Mountpoint + "/dashboards/" + item.name }}.json'
+#    force: '{{ item.force|default(grafana_dashboards_force|default("no")) }}'
+#  with_items: '{{ grafana_dashboards|default([]) }}'
+#  loop_control:
+#    label: '{{ item.name }}'
+#  tags: ['grafana']

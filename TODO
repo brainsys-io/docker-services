@@ -1,0 +1,10 @@
+##### traefik
+template / vars for basic auth ? for each user / pass
+-> several users OK ?
+global auth vs service auth ?
+
+#### grafana
+auth / pas auth ?
+push provisionner
+push dashboard
+

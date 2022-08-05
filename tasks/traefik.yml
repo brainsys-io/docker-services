@@ -1,0 +1,37 @@
+---
+- name: traefik | check vars are defined
+  assert:
+    that:
+      - traefik_domain is defined
+      - traefik_letsencrypt_email is defined
+  tags: ['docker_traefik']
+
+- include_tasks: base.yml
+  tags: ['docker_traefik']
+
+- name: traefik | create docker network
+  docker_network:
+    name: 'traefik'
+  tags: ['docker_traefik']
+
+- name: traefik | create letsencrypt docker volume
+  docker_volume:
+    name: traefik__letsencrypt
+  register: register_docker_volume_traefik__letsencrypt
+  tags: ['docker_traefik']
+
+- name: traefik | create config docker volume
+  docker_volume:
+    name: traefik__etc_traefik
+  register: register_docker_volume_traefik__etc_traefik
+  tags: ['docker_traefik']
+
+- name: traefik | copy configuration file
+  template:
+    src: config/traefik/traefik.yml.j2
+    dest: /var/lib/docker/volumes/traefik__etc_traefik/_data/traefik.yml
+    owner: root
+    group: root
+    mode: 0644
+  notify: traefik-restart
+  tags: ['docker_traefik']

@@ -1,0 +1,17 @@
+/var/log/docker/docker-daemon.log
+/var/log/docker/*.log {
+    daily
+    missingok
+    rotate 356
+    compress
+    compresscmd /bin/bzip2
+    uncompresscmd /bin/bunzip2
+    compressoptions -9
+    compressext .bz2
+    dateext
+    dateformat -%Y%m%d-%s
+    dateyesterday
+    notifempty
+    create 640 root adm
+    sharedscripts
+}

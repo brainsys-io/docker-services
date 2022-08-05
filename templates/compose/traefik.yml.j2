@@ -1,0 +1,45 @@
+---
+version: '3.7'
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  traefik__etc_traefik:
+    external: true
+  traefik__letsencrypt:
+    external: true
+
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: 'unless-stopped'
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik__etc_traefik:/etc/traefik:ro
+      - traefik__letsencrypt:/letsencrypt
+    command:
+      - "--providers.providersthrottleduration=100"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.traefik.rule: Host(`{{ traefik_domain }}`)
+      traefik.http.routers.traefik.entrypoints: websecure
+      traefik.http.routers.traefik.service: api@internal
+      traefik.http.routers.traefik.tls: true
+      traefik.http.routers.traefik.tls.certresolver: letsencrypt
+      traefik.http.routers.traefik.middlewares: auth
+      traefik.http.routers.dashboard.rule: Host(`{{ traefik_domain }}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      traefik.http.middlewares.auth.basicauth.users: "ludal:$$apr1$$N3vklVTY$$zrq2kwkaVdynGlakyb4J7."
+      traefik.http.middlewares.auth.basicauth.realm: {{ traefik_domain}} - restricted access
+    logging:
+      driver: syslog
+      options:
+        tag: docker_traefik
+    networks:
+      - traefik
+

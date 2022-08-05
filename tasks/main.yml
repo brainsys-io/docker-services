@@ -1,0 +1,17 @@
+---
+- name: requirements
+  include_tasks: requirements.yml
+
+- name: docker
+  include_tasks: docker.yml
+
+- name: services
+  vars:
+   service: "{{ item }}"
+  include_tasks: "{{ item }}.yml"
+  tags:
+    - docker_traefik
+    - docker_watchtower
+    - docker_grafana
+  with_items: 
+    - "{{ docker_services }}"

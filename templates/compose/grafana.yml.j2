@@ -1,0 +1,61 @@
+---
+version: '3.7'
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  grafana__var_lib_grafana:
+    external: true
+  grafana__etc_grafana_provisioning_dashboards:
+    external: true
+  grafana__etc_grafana_provisioning_datasources:
+    external: true
+
+services:
+  grafana:
+    image: grafana/grafana:{{ grafana_version | default("latest") }}
+    container_name: grafana
+    restart: 'unless-stopped'
+    volumes:
+      - grafana__var_lib_grafana:/var/lib/grafana
+      - grafana__etc_grafana_provisioning_dashboards:/etc/grafana/provisioning/dashboards
+      - grafana__etc_grafana_provisioning_datasources:/etc/grafana/provisioning/datasources
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik
+      traefik.http.routers.grafana.rule: Host(`{{ grafana_domain }}`)
+      traefik.http.routers.grafana.tls: true
+      traefik.http.routers.grafana.tls.certresolver: letsencrypt
+      traefik.http.routers.grafana.entrypoints: websecure
+      traefik.http.services.grafana.loadbalancer.server.port: 3000
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "{{ grafana_auth_anonymous_enabled|string|lower }}"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "{{ grafana_auth_anonymous_org_role }}"
+      GF_AUTH_ANONYMOUS_ORG_NAME: "{{ grafana_auth_anonymous_org_name }}"
+      GF_AUTH_DISABLE_LOGIN_FORM: "{{ grafana_auth_disable_login_form|string|lower }}"
+      GF_AUTH_EDITORS_CAN_ADMIN: "{{ grafana_editors_can_admin|string|lower }}"
+      GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_admin_password }}"
+      GF_USERS_VIEWERS_CAN_EDIT: "{{ grafana_users_viewers_can_edit|string|lower }}"
+      GF_ROOT_URL: "{{ grafana_domain }}"
+      GF_SMTP_ENABLED: "false"
+      GF_LOG_LEVEL: "{{ grafana_log_level|string }}"
+      GF_ROUTER_LOGGING: "{{ grafana_router_logging|string|lower }}"
+      GF_PANELS_DISABLE_SANITIZE_HTML: "{{ grafana_disable_sanitize_html|string|lower }}"
+{% if grafana_install_plugins is defined %}
+      GF_INSTALL_PLUGINS: "{{ grafana_install_plugins|string|lower }}"
+{% endif %}
+{% if grafana_smtp_enabled is defined %}
+      GF_SMTP_ENABLED: "{{ grafana_smtp_enabled|string|lower }}"
+      GF_SMTP_HOST: "{{ grafana_smtp_host|string }}"
+      GF_SMTP_FROM_ADDRESS: "{{ grafana_smtp_from_address|string }}"
+      GF_SMTP_FROM_NAME: "{{ grafana_smtp_from_name|string }}"
+      GF_SMTP_SKIP_VERIFY: "{{ grafana_smtp_skip_verify|string|lower }}"
+{% endif %}
+    logging:
+      driver: syslog
+      options:
+        tag: docker_grafana
+    networks:
+      - traefik

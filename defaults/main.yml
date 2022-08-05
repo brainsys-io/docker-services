@@ -1,0 +1,52 @@
+---
+# grafana
+grafana_auth_anonymous_enabled: true
+grafana_auth_anonymous_org_role: Editor # Viewer
+grafana_auth_anonymous_org_name: 'Main Org.'
+grafana_auth_disable_login_form: true
+grafana_editors_can_admin: false
+grafana_users_viewers_can_edit: false
+grafana_log_level: error
+grafana_router_logging: false
+grafana_disable_sanitize_html: true
+
+
+# provisionning dashboards
+# see https://grafana.com/docs/administration/provisioning/#dashboards
+awh_services_grafana_provisionning_dashboards:
+  apiVersion: 1
+  providers:
+  - name: 'Grafana Dashboards'
+    orgId: 1
+    folder: ''
+    folderUid: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 11
+    options:
+      path: /var/lib/grafana/dashboards
+
+# provisionning datasources.
+# see https://grafana.com/docs/administration/provisioning/#datasources
+awh_services_grafana_provisionning_datasources:
+  - name: loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    jsonData:
+      httpMode: GET
+    editable: false
+    isDefault: false
+
+  #apiVersion: 1
+  #datasources:
+  - name: prometheus
+    type: prometheus
+    access: proxy
+    database: prometheus
+    url: http://10.0.226.252:9090
+    jsonData:
+      httpMode: GET
+    editable: false
+    isDefault: true

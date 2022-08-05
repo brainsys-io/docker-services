@@ -1,0 +1,3 @@
+---
+- include_tasks: base.yml
+  tags: ['docker_watchtower']

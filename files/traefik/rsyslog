@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+
+$Template docker_split_log,"/var/log/docker/%syslogtag:R,ERE,1,DFLT:docker_(.+)(\[[0-9]+\]):--end%.log"
+$Template docker-daemon_log,"/var/log/docker/docker-daemon.log"
+
+
+# docker services logs splitted per tag prefixed docker_<servicename>
+:syslogtag, startswith, "docker_" ?docker_split_log
+:syslogtag, startswith, "docker_" stop
+
+:syslogtag, startswith, "dockerd" ?docker-daemon_log
+:syslogtag, startswith, "dockerd" stop

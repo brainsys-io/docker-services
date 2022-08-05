@@ -1,0 +1,37 @@
+---
+#- name: debug
+#  debug:
+#    msg: "Service: {{ service }}"
+
+- name: "{{ service }} | create docker-compose directory"
+  file:
+    path: /opt/docker-compose/{{ service }}
+    state: directory
+    mode: '0755'
+  tags: [ 'docker_{{ service }}' ]
+
+- name: "{{ service }} | copy docker-compose file"
+  template:
+    src: compose/{{ service }}.yml.j2
+    dest: /opt/docker-compose/{{ service }}/docker-compose.yml
+    owner: root
+    group: root
+    mode: 0644
+  notify: "{{ service }}-restart"
+  tags: [ 'docker_{{ service }}' ]
+
+- name: "{{ service }} | install unit file to systemd"
+  template:
+    src: systemd/docker-compose.service.j2
+    dest: /etc/systemd/system/docker-compose@{{ service }}.service
+    owner: root
+    group: root
+    mode: 0600
+  tags: [ 'docker_{{ service }}' ]
+
+- name: "{{ service }} | enable service"
+  systemd:
+    daemon_reload: yes
+    name: docker-compose@{{ service }}
+    enabled: true
+  tags: [ 'docker_{{ service }}' ]
