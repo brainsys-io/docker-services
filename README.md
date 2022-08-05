@@ -56,23 +56,23 @@ Example variables
 TODO
 ----
 
-1. Traefik
-    1. add variables for basic auth in templates
-    2. choose between global auth vs service auth
-2. Grafana
-    1. Handle providers
-    2. Handle custom dashboards
-    3. Permit anonymous login and user login
-3. OpenVPN
-    1. needs to be implemented
-4. SSHPortal
-    1. needs to be implemented
-5. Loki
-    1. needs to be implemented
-6. Promtail
-    1. needs to be implemented
-7. Gitlab
-    1. needs to be implemented
+- Traefik
+  - add variables for basic auth in templates
+  - choose between global auth vs service auth
+- Grafana
+  - Handle providers
+  - Handle custom dashboards
+  - Permit anonymous login and user login
+- OpenVPN
+  - needs to be implemented
+- SSHPortal
+  - needs to be implemented
+- Loki
+  - needs to be implemented
+- Promtail
+  - needs to be implemented
+- Gitlab
+  - needs to be implemented
 
 License
 -------
