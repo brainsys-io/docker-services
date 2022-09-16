@@ -1,0 +1,9 @@
+---
+- name: maildev | check vars are defined
+  assert:
+    that:
+      - maildev_domain is defined
+  tags: ['docker_maildev']
+
+- include_tasks: base.yml
+  tags: ['docker_maildev']

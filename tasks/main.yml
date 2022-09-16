@@ -13,5 +13,6 @@
     - docker_traefik
     - docker_watchtower
     - docker_grafana
+    - docker_maildev
   with_items: 
     - "{{ docker_services }}"

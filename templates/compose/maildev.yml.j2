@@ -1,0 +1,24 @@
+version: '3.7'
+
+networks:
+  traefik:
+    external: true
+
+services:
+  maildev:
+    container_name: maildev
+    image: maildev/maildev:{{ maildev_version | default("latest") }}
+    restart: unless-stopped
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik
+      traefik.http.routers.maildev.rule: Host(`{{ maildev_domain }}`)
+      traefik.http.routers.maildev.tls: true
+      traefik.http.routers.maildev.tls.certresolver: letsencrypt
+      traefik.http.routers.maildev.entrypoints: websecure
+      traefik.http.services.maildev.loadbalancer.server.port: 1080
+    networks:
+      - traefik

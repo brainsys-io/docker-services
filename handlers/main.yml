@@ -3,16 +3,26 @@
   systemd:
     name: docker-compose@traefik
     state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_traefik']
 
 - name: watchtower-restart
   systemd:
     name: docker-compose@watchtower
     state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_watchtower']
 
 - name: grafana-restart
   systemd:
     name: docker-compose@grafana
     state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_grafana']
+
+- name: maildev-restart
+  systemd:
+    name: docker-compose@maildev
+    state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: ['docker_maildev']

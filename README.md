@@ -16,6 +16,7 @@ Available services
   - Traefik
   - Watchtower
   - Grafana
+  - Maildev
 
 Role variables
 ---------------
@@ -48,9 +49,12 @@ Example variables
     - traefik
     - watchtower
     - grafana
+    - maildev
 
   traefik_domain: 'mydomain.com'
   traefik_letsencrypt_email: 'cert@mydomain.com'
+
+  maildev_domain: 'maildev.mydomain.com'
 ```
 
 TODO
