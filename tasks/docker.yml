@@ -32,6 +32,7 @@
     name:
       - docker
       - docker-compose
+    executable: pip3
   tags: ['docker']
 
 - name: ensure Docker is started and enabled at boot
