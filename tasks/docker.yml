@@ -48,6 +48,7 @@
     dest: /etc/rsyslog.d/10-docker.conf
     mode: '0644'
     force: yes
+  when: rsyslog_docker is defined
 
 - name: copy logrotate config
   copy:
@@ -55,3 +56,4 @@
     dest: /etc/logrotate.d/docker
     mode: '0644'
     force: yes
+  when: logrotate_docker is defined
