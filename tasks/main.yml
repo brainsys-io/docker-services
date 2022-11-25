@@ -14,5 +14,6 @@
     - docker_watchtower
     - docker_grafana
     - docker_maildev
+    - docker_redisinsight
   with_items: 
     - "{{ docker_services }}"

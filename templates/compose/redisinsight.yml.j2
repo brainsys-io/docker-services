@@ -1,0 +1,34 @@
+version: '3.7'
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  redisinsight__db:
+
+services:
+  redisinsight:
+    container_name: redisinsight
+    image: git.rznet.fr/docker/redisinsight:latest
+    restart: unless-stopped
+    volumes:
+      - redisinsight__db:/root/.redisinsight-v2/
+    cap_add:
+      - IPC_LOCK
+    labels:
+      traefik.enable: "true"
+      ## IP
+      traefik.http.routers.redisinsight.rule: "Host(`{{ redisinsight_domain }}`){% if redisinsight_whitelist is defined %} && ClientIP({% for ip in redisinsight_whitelist %}`{{ ip }}`,{% endfor %}){% endif %}"
+      traefik.http.routers.redisinsight.entrypoints: "websecure"
+      traefik.http.routers.redisinsight.tls.certresolver: "letsencrypt"
+      traefik.http.services.redisinsight.loadbalancer.server.port: "5000"
+{% if redisinsight_auth is defined %}
+      ## AUTH
+      traefik.http.routers.redisinsight-auth.rule: "Host(`{{ redisinsight_domain }}`)"
+      traefik.http.routers.redisinsight-auth.entrypoints: "websecure"
+      traefik.http.routers.redisinsight-auth.tls.certresolver: "letsencrypt"
+      traefik.http.routers.redisinsight-auth.middlewares: "basicauth@file"
+{% endif %}
+    networks:
+     - traefik

@@ -18,6 +18,7 @@ Available services
   - Grafana
   - Maildev
   - cadvisor
+  - Redisinsight
 
 Role variables
 ---------------
@@ -52,11 +53,18 @@ Example variables
     - grafana
     - maildev
     - cadvisor
+    - redisinsight
 
   traefik_domain: 'mydomain.com'
   traefik_letsencrypt_email: 'cert@mydomain.com'
 
   maildev_domain: 'maildev.mydomain.com'
+
+  redisinsight_domain: 'redisinsight.mydomain.com'
+  redisinsight_whitelist:
+	- 192.168.1.0/24
+	- 31.15.24.XX
+	- 37.58.179.XX
 ```
 
 TODO

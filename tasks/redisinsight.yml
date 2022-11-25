@@ -1,0 +1,9 @@
+---
+- name: redisinsight | check vars are defined
+  assert:
+    that:
+      - redisinsight_domain is defined
+  tags: ['docker_redisinsight']
+
+- include_tasks: base.yml
+  tags: ['docker_redisinsight']

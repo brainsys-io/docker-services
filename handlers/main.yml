@@ -26,3 +26,10 @@
     state: restarted
   ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_maildev']
+
+- name: redisinsight-restart
+  systemd:
+    name: docker-compose@redisinsight
+    state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: ['docker_redisinsight']
