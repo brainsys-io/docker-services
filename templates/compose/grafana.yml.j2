@@ -29,6 +29,9 @@ services:
       traefik.http.routers.grafana.tls: true
       traefik.http.routers.grafana.tls.certresolver: letsencrypt
       traefik.http.routers.grafana.entrypoints: websecure
+{% if traefik_ipwhitelist is defined %}
+    ¦ traefik.http.routers.grafana.middlewares: "clientips@docker"
+{% endif %}
       traefik.http.services.grafana.loadbalancer.server.port: 3000
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: "{{ grafana_auth_anonymous_enabled|string|lower }}"

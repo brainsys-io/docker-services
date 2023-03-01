@@ -57,6 +57,7 @@ Example variables
 
   traefik_domain: 'mydomain.com'
   traefik_letsencrypt_email: 'cert@mydomain.com'
+  traefik_ipwhitelist: '42.42.42.42/32, 192.168.1.0/24, 127.0.0.1/32'
 
   maildev_domain: 'maildev.mydomain.com'
 

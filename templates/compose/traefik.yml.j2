@@ -34,8 +34,11 @@ services:
       traefik.http.routers.traefik.tls.certresolver: letsencrypt
       traefik.http.routers.traefik.middlewares: auth
       traefik.http.routers.dashboard.rule: Host(`{{ traefik_domain }}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+{% if traefik_ipwhitelist is defined %}
+      traefik.http.middlewares.clientips.ipwhitelist.sourcerange: {{ traefik_ipwhitelist }}
+{% endif %}
       traefik.http.middlewares.auth.basicauth.users: "ludal:$$apr1$$N3vklVTY$$zrq2kwkaVdynGlakyb4J7."
-      traefik.http.middlewares.auth.basicauth.realm: {{ traefik_domain}} - restricted access
+      traefik.http.middlewares.auth.basicauth.realm: {{ traefik_domain }} - restricted access
     logging:
       driver: syslog
       options:
