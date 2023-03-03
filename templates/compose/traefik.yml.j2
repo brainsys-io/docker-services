@@ -32,7 +32,6 @@ services:
       traefik.http.routers.traefik.service: api@internal
       traefik.http.routers.traefik.tls: true
       traefik.http.routers.traefik.tls.certresolver: letsencrypt
-      traefik.http.routers.traefik.middlewares: auth
       traefik.http.routers.dashboard.rule: Host(`{{ traefik_domain }}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
 {% if traefik_ipwhitelist is defined %}
       traefik.http.middlewares.clientips.ipwhitelist.sourcerange: {{ traefik_ipwhitelist }}
