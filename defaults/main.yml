@@ -3,7 +3,7 @@
 grafana_auth_anonymous_enabled: true
 grafana_auth_anonymous_org_role: Editor # Viewer
 grafana_auth_anonymous_org_name: 'Main Org.'
-grafana_auth_disable_login_form: true
+grafana_auth_disable_login_form: false
 grafana_editors_can_admin: false
 grafana_users_viewers_can_edit: false
 grafana_log_level: error
