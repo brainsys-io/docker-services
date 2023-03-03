@@ -24,7 +24,7 @@ services:
       traefik.http.routers.redisinsight.tls.certresolver: "letsencrypt"
       traefik.http.services.redisinsight.loadbalancer.server.port: "5000"
 {% if traefik_ipwhitelist is defined %}
-    ¦ traefik.http.routers.redisinsight.middlewares: "clientips@docker"
+      traefik.http.routers.redisinsight.middlewares: "clientips@docker"
 {% endif %}
 {% if redisinsight_auth is defined %}
       ## AUTH
