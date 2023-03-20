@@ -33,3 +33,11 @@
     state: restarted
   ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_redisinsight']
+
+- name: cadvisor-restart
+  systemd:
+    name: docker-compose@cadvisor
+    state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: ['docker_cadvisor']
+
