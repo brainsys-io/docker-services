@@ -1,0 +1,52 @@
+version: '3.7'
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  gitlab__etc_config:
+    external: true
+  gitlab__var_log_gitlab:
+    external: true
+  gitlab__var_opt_gitlab:
+    external: true
+  gitlab__backups:
+    external: true
+  gitlab__run_secrets:
+    external: true
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:{{ gitlab_version|default("latest") }}
+    container_name: gitlab
+    restart: 'unless-stopped'
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.gitlab.rule: "Host(`{{ gitlab_domain }}`) || Host(`{{ gitlab_registry_domain }}`)"
+      traefik.http.routers.gitlab.tls: true
+      traefik.http.routers.gitlab.tls.certresolver: "letsencrypt"
+      traefik.http.routers.gitlab.entrypoints: "websecure"
+{% if traefik_ipwhitelist is defined %}
+      traefik.http.routers.grafana.middlewares: "clientips@docker"
+{% endif %}
+      traefik.http.services.gitlab.loadbalancer.server.port: "80"
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      GITLAB_SIGNUP_ENABLED: 'false'
+      GITLAB_OMNIBUS_CONFIG: |-
+        {{ gitlab_omnibus_config | indent(width=8)}}
+    ports: {{ gitlab_ports }}
+    volumes:
+      - 'gitlab__etc_config:/etc/gitlab'
+      - 'gitlab__var_log_gitlab:/var/log/gitlab'
+      - 'gitlab__var_opt_gitlab:/var/opt/gitlab'
+      - 'gitlab__run_secrets:/run/secrets'
+      - '{{ gitlab_backup_path|default("gitlab__backups") }}:/backups_internal_mount'
+    logging:
+      driver: syslog
+      options:
+        tag: docker_gitlab
+    networks:
+      - traefik

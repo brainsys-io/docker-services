@@ -1,0 +1,50 @@
+---
+- name: gitlab | check vars are defined
+  assert:
+    that:
+      - gitlab_domain is defined
+      - gitlab_registry_domain
+      - gitlab_root_password
+  tags: ['docker_gitlab']
+
+- include_tasks: base.yml
+  tags: ['docker_gitlab']
+
+- name: 'gitlab | create docker volumes'
+  docker_volume:
+    name: '{{ item }}'
+  with_items:
+  - 'gitlab__etc_config'
+  - 'gitlab__var_log_gitlab'
+  - 'gitlab__var_opt_gitlab'
+  tags: ['docker_gitlab']
+
+- name: 'gitlab | create docker volume backup'
+  docker_volume:
+    name: 'gitlab__backups'
+  tags: ['docker_gitlab']
+
+- name: 'gitlab | create docker volume gitlab__run_secrets'
+  docker_volume:
+    name: 'gitlab__run_secrets'
+  register: 'register_docker_volume_gitlab_gitlab__run_secrets'
+  tags: ['docker_gitlab']
+
+- name: 'gitlab | configure secret gitlab_root_password'
+  copy:
+    dest: '{{ register_docker_volume_gitlab_gitlab__run_secrets.volume.Mountpoint }}/gitlab_root_password'
+    mode: '0600'
+    content: '{{ gitlab_root_password }}'
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: ['docker_gitlab']
+
+- name: 'gitlab : define cronjob backup'
+  cron:
+    name: 'docker_gitlab_backup'
+    job: '/usr/bin/docker exec -t gitlab gitlab-backup create CRON=1 2>&1 | /usr/bin/logger -t docker_gitlab'
+    minute: '{{ gitlab_backup_cron.minute | default(omit) }}'
+    hour: '{{ gitlab_backup_cron.hour | default(omit) }}'
+    day: '{{ gitlab_backup_cron.day | default(omit) }}'
+    month: '{{ gitlab_backup_cron.month | default(omit) }}'
+    weekday: '{{ gitlab_backup_cron.weekday | default(omit) }}'
+  tags: ['docker_gitlab']

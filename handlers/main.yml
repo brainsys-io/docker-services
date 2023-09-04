@@ -41,3 +41,9 @@
   ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_cadvisor']
 
+- name: gitlab-restart
+  systemd:
+    name: docker-compose@gitlab
+    state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: ['docker_gitlab']

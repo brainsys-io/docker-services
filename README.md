@@ -9,6 +9,7 @@ It has been tested on :
   - Debian 9
   - Debian 10
   - Debian 11
+  - Debian 12
 
 Available services
 ------------------
@@ -19,6 +20,7 @@ Available services
   - Maildev
   - cadvisor
   - Redisinsight
+  - Gitlab
 
 Role variables
 ---------------
@@ -54,18 +56,24 @@ Example variables
     - maildev
     - cadvisor
     - redisinsight
+    - gitlab
 
-  traefik_domain: 'mydomain.com'
-  traefik_letsencrypt_email: 'cert@mydomain.com'
+  traefik_domain: 'example.com'
+  traefik_letsencrypt_email: 'cert@example.com'
   traefik_ipwhitelist: '42.42.42.42/32, 192.168.1.0/24, 127.0.0.1/32'
 
-  maildev_domain: 'maildev.mydomain.com'
+  maildev_domain: 'maildev.example.com'
 
-  redisinsight_domain: 'redisinsight.mydomain.com'
+  redisinsight_domain: 'redisinsight.example.com'
   redisinsight_whitelist:
 	- 192.168.1.0/24
 	- 31.15.24.XX
 	- 37.58.179.XX
+
+  gitlab_version: 'latest'
+  gitlab_root_password: 'vault-this-thingy'
+  gitlab_domain: gitlab.example.com
+  gitlab_registry_domain: registry.example.com
 ```
 
 TODO
