@@ -1,7 +1,7 @@
 ---
-# grafana
+### Grafana
 grafana_auth_anonymous_enabled: true
-grafana_auth_anonymous_org_role: Editor # Viewer
+grafana_auth_anonymous_org_role: Viewer
 grafana_auth_anonymous_org_name: 'Main Org.'
 grafana_auth_disable_login_form: false
 grafana_editors_can_admin: false
@@ -10,43 +10,59 @@ grafana_log_level: error
 grafana_router_logging: false
 grafana_disable_sanitize_html: true
 
-
-# provisionning dashboards
-# see https://grafana.com/docs/administration/provisioning/#dashboards
-awh_services_grafana_provisionning_dashboards:
-  apiVersion: 1
-  providers:
-  - name: 'Grafana Dashboards'
-    orgId: 1
-    folder: ''
-    folderUid: ''
-    type: file
-    disableDeletion: false
-    editable: true
-    updateIntervalSeconds: 11
-    options:
-      path: /var/lib/grafana/dashboards
-
-# provisionning datasources.
-# see https://grafana.com/docs/administration/provisioning/#datasources
-awh_services_grafana_provisionning_datasources:
-  - name: loki
-    type: loki
-    access: proxy
-    url: http://loki:3100
-    jsonData:
-      httpMode: GET
-    editable: false
-    isDefault: false
-
-  #apiVersion: 1
-  #datasources:
-  - name: prometheus
-    type: prometheus
-    access: proxy
-    database: prometheus
-    url: http://10.0.226.252:9090
-    jsonData:
-      httpMode: GET
-    editable: false
-    isDefault: true
+### Gitlab
+# gitlab_root_password: required...
+gitlab_external_url: 'https://{{ gitlab_domain }}'
+gitlab_shell_ssh_port: 2221
+gitlab_ports:
+  - '{{ gitlab_shell_ssh_port }}:22'
+gitlab_smtp_from_name: Gitlab
+gitlab_smtp_authentication: false
+gitlab_smtp_openssl_verify_mode: none
+gitlab_nginx_client_max_body_size: 250m
+gitlab_time_zone: Paris
+gitlab_git_max_size: 152428800 # 150.megabytes
+gitlab_git_timeout: 300
+gitlab_backup_retention: 604800  # 7D
+gitlab_backup_cron: { hour: 12, minute: 0 }
+gitlab_prometheus_enable: false
+gitlab_alertmanager_enable: false
+gitlab_grafana_enable: false
+gitlab_redis_exporter: false
+gitlab_postgres_exporter: false
+gitlab_gitlab_exporter: false
+gitlab_node_exporter: false
+gitlab_omnibus_config: |
+  |
+  external_url '{{ gitlab_external_url }}'
+  nginx['listen_port'] = 80
+  nginx['listen_https'] = false
+  nginx['client_max_body_size'] = '{{ gitlab_nginx_client_max_body_size }}'
+  gitlab_rails['initial_root_password'] = File.read('/run/secrets/gitlab_root_password')
+  gitlab_rails['gitlab_shell_ssh_port'] = {{ gitlab_shell_ssh_port }}
+  gitlab_rails['time_zone'] = '{{ gitlab_time_zone }}'
+  gitlab_rails['git_max_size'] = {{ gitlab_git_max_size }}
+  gitlab_rails['git_timeout'] = {{ gitlab_git_timeout }}
+  gitlab_rails['gitlab_default_projects_features_issues'] = true
+  gitlab_rails['gitlab_default_projects_features_merge_requests'] = true
+  gitlab_rails['gitlab_default_projects_features_wiki'] = true
+  gitlab_rails['gitlab_default_projects_features_snippets'] = true
+  gitlab_rails['gitlab_default_projects_features_builds'] = true
+  gitlab_rails['artifacts_enabled'] = true
+  gitlab_rails['backup_path'] = "/backups_internal_mount"
+  gitlab_rails['backup_keep_time'] = {{ gitlab_backup_retention }}
+  gitlab_rails['smtp_enable'] = false
+  gitlab_rails['smtp_address'] = '127.0.0.1'
+  gitlab_rails['smtp_port'] = '25'
+  gitlab_rails['gitlab_email_from'] = 'gitlab@localhost'
+  gitlab_rails['gitlab_email_display_name'] = 'Gitlab'
+  gitlab_rails['smtp_authentication'] = false
+  gitlab_rails['smtp_openssl_verify_mode'] = 'none'
+  prometheus['enable'] = {{ gitlab_prometheus_enable|string|lower }}
+  alertmanager['enable'] = {{ gitlab_alertmanager_enable|string|lower }}
+  grafana['enable'] = {{ gitlab_grafana_enable|string|lower }}
+  redis_exporter['enable'] = {{ gitlab_redis_exporter|string|lower }}
+  postgres_exporter['enable'] = {{ gitlab_postgres_exporter|string|lower }}
+  gitlab_exporter['enable'] = {{ gitlab_gitlab_exporter|string|lower }}
+  node_exporter['enable'] = {{ gitlab_node_exporter|string|lower }}
+  {{ gitlab_omnibus_config_extend|default() }}
