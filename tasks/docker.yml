@@ -16,7 +16,8 @@
     name:
       - docker-ce
       - docker-ce-cli
-      - docker-compose
+      - containerd.io
+      - docker-buildx-plugin
     state: present
   tags: ['docker']
 
@@ -25,14 +26,6 @@
     path: /opt/docker-compose
     state: directory
     mode: '0755'
-  tags: ['docker']
-
-- name: install Python module
-  pip:
-    name:
-      - docker
-      - docker-compose
-    executable: pip3
   tags: ['docker']
 
 - name: ensure Docker is started and enabled at boot
