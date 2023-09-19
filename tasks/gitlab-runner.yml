@@ -1,0 +1,110 @@
+---
+- name: 'gitlab-runner: create docker volume'
+  docker_volume:
+    name: '{{ item }}'
+  with_items:
+  - gitlab-runner-dind__var_lib_docker
+  - gitlab-runner__home_gitlab-runner
+
+
+- name: 'gitlab-runner: create docker volume gitlab-runner_etc_gitlab-runner'
+  docker_volume:
+    name: gitlab-runner__etc_gitlab-runner
+  register: register_gitlab_runner_etc_gitlab_runner
+
+
+- name: 'gitlab-runner: register to gitlab'
+  uri:
+    url: 'https://{{ gitlab_runner_runner_url }}/api/v4/runners'
+    method: POST
+    body:
+      token: '{{ gitlab_runner_register_token }}'
+      description: '{{ inventory_hostname }}'
+    status_code: 201
+    body_format: json
+  register: register_gitlab_runner_register
+  when:
+  - 'gitlab_runner_register_token is defined'
+
+- name: 'gitlab-runner: configure config.toml'
+  copy:
+    dest: '{{ register_gitlab_runner_etc_gitlab_runner.ansible_facts.docker_volume.Mountpoint }}/config.toml'
+    mode: '0600'
+    content: |
+      concurrent = 1
+      check_interval = 0
+      [session_server]
+        session_timeout = 1800
+      [[runners]]
+        name = "{{ inventory_hostname }}"
+        url = "https://{{ gitlab_domain }}/"
+        token = "{{ register_gitlab_runner_register.json.token }}"
+        executor = "docker"
+        [runners.docker]
+          host = "tcp://docker:2376/"
+          tls_cert_path = "/certs/client"
+          tls_verify = false
+          image = "debian:stable-slim"
+          privileged = false
+          disable_entrypoint_overwrite = false
+          oom_kill_disable = false
+          disable_cache = false
+          volumes = ["/var/run/docker.sock:/var/run/docker.sock:rw", "/cache", "/builds:/builds"]
+          shm_size = 0
+          pull_policy = ["always", "if-not-present"]
+  notify: 'docker restart gitlab-runner'
+  when:
+  - 'gitlab_runner_register_token is defined'
+  - 'register_gitlab_runner_register.json.token is defined'
+
+# use gitlab runner with docker executors and isolation in dind ;)
+- name: 'gitlab-runner: deploy container docker'
+  docker_container:
+    name: docker
+    image: docker:{{ gitlab_runner_dind_version }}
+    privileged: yes
+    volumes:
+    - 'gitlab-runner-dind__var_lib_docker:/var/lib/docker'
+    - 'gitlab-runner-dind__certs:/certs'
+    log_driver: syslog
+    log_options:
+      tag: docker_gitlab-runner
+    restart_policy: 'unless-stopped'
+    pull: '{{ docker_pull }}'
+
+- name: 'gitlab-runner: deploy container'
+  docker_container:
+    name: gitlab-runner
+    hostname: '{{ inventory_hostname }}'
+    image:  gitlab/gitlab-runner:{{ gitlab_runner_version }}
+    links:
+    - docker:gitlab-runner
+    env:
+      DOCKER_HOST: tcp://docker:2376/
+      DOCKER_TLS_CERTDIR: "/certs"
+      DOCKER_DRIVER: overlay2
+    volumes:
+    - 'gitlab-runner__etc_gitlab-runner:/etc/gitlab-runner'
+    - 'gitlab-runner__home_gitlab-runner:/home/gitlab-runner'
+    - 'gitlab-runner-dind__certs:/certs'
+    log_driver: syslog
+    log_options:
+      tag: docker_gitlab
+    restart_policy: 'unless-stopped'
+    pull: '{{ docker_pull }}'
+  register: register_docker_container_gitlab_runner
+
+
+- name: 'gitab-runner: configure cron garbage in dind'
+  cron:
+    name: "gitlab_runner_garbage"
+    minute: "50"
+    hour: "*/2"
+    job: "/usr/bin/docker exec docker docker system prune -f; /usr/bin/docker exec docker docker volume prune -f 2>&1 |logger -t gitlab-runner"
+
+- name: 'gitab-runner: purge dind cache'
+  cron:
+    name: "purge_dind_ci_cache"
+    minute: "30"
+    hour: "04"
+    job: "/usr/bin/docker exec -t docker /usr/bin/find /cache -mindepth 1 -mtime +7 -delete 2>&1 |logger -t gitlab-runner"
