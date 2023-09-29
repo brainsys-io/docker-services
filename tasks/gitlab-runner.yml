@@ -3,6 +3,7 @@
   assert:
     that:
       - gitlab_domain is defined
+      - gitlab_runner_register_token is defined
   tags: ['docker_gitlab-runner']
 
 - include_tasks: base.yml
@@ -20,7 +21,7 @@
 
 - name: 'gitlab-runner | register to gitlab'
   uri:
-    url: 'https://{{ gitlab_runner_runner_url }}/api/v4/runners'
+    url: 'https://{{ gitlab_domain }}/api/v4/runners'
     method: POST
     body:
       token: '{{ gitlab_runner_register_token }}'
