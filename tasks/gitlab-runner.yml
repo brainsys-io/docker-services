@@ -43,10 +43,12 @@
     dest: '/var/lib/docker/volumes/gitlab-runner__etc_gitlab-runner/_data/config.toml'
     mode: '0600'
     content: |
-      concurrent = 1
+      concurrent = "{{ (ansible_processor_cores * ansible_processor_count)|int }}"
       check_interval = 0
+
       [session_server]
         session_timeout = 1800
+
       [[runners]]
         name = "{{ inventory_hostname }}"
         url = "https://{{ gitlab_domain }}/"
@@ -55,13 +57,13 @@
         [runners.docker]
           host = "tcp://docker:2376/"
           tls_cert_path = "/certs/client"
-          tls_verify = false
+          tls_verify = true
           image = "debian:stable-slim"
-          privileged = false
+          privileged = true
           disable_entrypoint_overwrite = false
           oom_kill_disable = false
           disable_cache = false
-          volumes = ["/var/run/docker.sock:/var/run/docker.sock:rw", "/cache", "/builds:/builds"]
+          volumes = ["/certs/client", "/var/run/docker.sock:/var/run/docker.sock:rw", "/cache", "/builds:/builds"]
           shm_size = 0
           pull_policy = ["always", "if-not-present"]
   notify: 'gitlab-runner-restart'
