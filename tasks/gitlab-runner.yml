@@ -7,7 +7,7 @@
   tags: ['docker_gitlab-runner']
 
 - include_tasks: base.yml
-  tags: ['docker_gitlab']
+  tags: ['docker_gitlab-runner']
 
 - name: gitlab-runner | create docker network
   docker_network:
