@@ -12,8 +12,8 @@
 
 - name: "{{ service }} | copy docker-compose file"
   template:
-    src: compose/{{ service }}.yml.j2
-    dest: /opt/docker-compose/{{ service }}/docker-compose.yml
+    src: compose/{{ service }}.yml.j2
+    dest: /opt/docker-compose/{{ service }}/docker-compose.yml
     owner: root
     group: root
     mode: 0644
@@ -23,7 +23,7 @@
 - name: "{{ service }} | install unit file to systemd"
   template:
     src: systemd/docker-compose.service.j2
-    dest: /etc/systemd/system/docker-compose@{{ service }}.service
+    dest: /etc/systemd/system/docker-compose@{{ service }}.service
     owner: root
     group: root
     mode: 0600
