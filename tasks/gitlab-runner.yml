@@ -5,13 +5,13 @@
   with_items:
   - gitlab-runner-dind__var_lib_docker
   - gitlab-runner__home_gitlab-runner
-
+  tags: ['docker_gitlab-runner']
 
 - name: 'gitlab-runner: create docker volume gitlab-runner_etc_gitlab-runner'
   docker_volume:
     name: gitlab-runner__etc_gitlab-runner
   register: register_gitlab_runner_etc_gitlab_runner
-
+  tags: ['docker_gitlab-runner']
 
 - name: 'gitlab-runner: register to gitlab'
   uri:
@@ -25,6 +25,7 @@
   register: register_gitlab_runner_register
   when:
   - 'gitlab_runner_register_token is defined'
+  tags: ['docker_gitlab-runner']
 
 - name: 'gitlab-runner: configure config.toml'
   copy:
@@ -56,6 +57,7 @@
   when:
   - 'gitlab_runner_register_token is defined'
   - 'register_gitlab_runner_register.json.token is defined'
+  tags: ['docker_gitlab-runner']
 
 # use gitlab runner with docker executors and isolation in dind ;)
 - name: 'gitlab-runner: deploy container docker'
@@ -71,6 +73,7 @@
       tag: docker_gitlab-runner
     restart_policy: 'unless-stopped'
     pull: '{{ docker_pull }}'
+  tags: ['docker_gitlab-runner']
 
 - name: 'gitlab-runner: deploy container'
   docker_container:
@@ -93,6 +96,7 @@
     restart_policy: 'unless-stopped'
     pull: '{{ docker_pull }}'
   register: register_docker_container_gitlab_runner
+  tags: ['docker_gitlab-runner']
 
 
 - name: 'gitab-runner: configure cron garbage in dind'
@@ -101,6 +105,7 @@
     minute: "50"
     hour: "*/2"
     job: "/usr/bin/docker exec docker docker system prune -f; /usr/bin/docker exec docker docker volume prune -f 2>&1 |logger -t gitlab-runner"
+  tags: ['docker_gitlab-runner']
 
 - name: 'gitab-runner: purge dind cache'
   cron:
@@ -108,3 +113,4 @@
     minute: "30"
     hour: "04"
     job: "/usr/bin/docker exec -t docker /usr/bin/find /cache -mindepth 1 -mtime +7 -delete 2>&1 |logger -t gitlab-runner"
+  tags: ['docker_gitlab-runner']

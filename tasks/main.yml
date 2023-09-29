@@ -16,5 +16,6 @@
     - docker_maildev
     - docker_redisinsight
     - docker_gitlab
+    - docker-gitlab-runner
   with_items: 
     - "{{ docker_services }}"
