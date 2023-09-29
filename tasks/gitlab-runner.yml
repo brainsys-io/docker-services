@@ -35,7 +35,7 @@
 
 - name: 'gitlab-runner | configure config.toml'
   copy:
-    dest: '{{ register_gitlab_runner_etc_gitlab_runner.ansible_facts.docker_volume.Mountpoint }}/config.toml'
+    dest: '/var/lib/docker/volumes/gitlab-runner__etc_gitlab-runner/_data/config.toml'
     mode: '0600'
     content: |
       concurrent = 1

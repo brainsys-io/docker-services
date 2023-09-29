@@ -49,9 +49,8 @@
   tags: ['docker_gitlab']
 
 - name: 'gitlab-runner-restart'
-  docker_container:
-    name: gitlab-runner
-    restart: yes
-  when:
-  - 'not register_docker_container_gitlab_runner.changed'
+  systemd:
+    name: docker-compose@gitlab-runner
+    state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_gitlab-runner']
