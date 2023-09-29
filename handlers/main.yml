@@ -48,10 +48,10 @@
   ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_gitlab']
 
-- name: 'docker restart gitlab-runner'
+- name: 'gitlab-runner-restart'
   docker_container:
     name: gitlab-runner
     restart: yes
   when:
   - 'not register_docker_container_gitlab_runner.changed'
-  tags: ['docker_gitlab_runner']
+  tags: ['docker_gitlab-runner']

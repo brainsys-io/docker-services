@@ -58,7 +58,7 @@
           volumes = ["/var/run/docker.sock:/var/run/docker.sock:rw", "/cache", "/builds:/builds"]
           shm_size = 0
           pull_policy = ["always", "if-not-present"]
-  notify: 'docker restart gitlab-runner'
+  notify: 'gitlab-runner-restart'
   when:
   - 'gitlab_runner_register_token is defined'
   - 'register_gitlab_runner_register.json.token is defined'
