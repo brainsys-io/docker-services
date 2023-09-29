@@ -37,7 +37,7 @@ services:
         tag: docker_gitlab-runner
 
   docker:
-    image: {{ gitlab_runner_dind_version | default("latest") }}
+    image: docker:{{ gitlab_runner_dind_version | default("latest") }}
     container_name: docker
     restart: unless-stopped
     privileged: yes

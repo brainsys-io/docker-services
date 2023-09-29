@@ -9,7 +9,12 @@
 - include_tasks: base.yml
   tags: ['docker_gitlab']
 
-- name: 'gitlab-runner | create docker volumes'
+- name: gitlab-runner | create docker network
+  docker_network:
+    name: 'gitlab-runner'
+  tags: ['docker_gitlab-runner']
+
+- name: gitlab-runner | create docker volumes
   docker_volume:
     name: '{{ item }}'
   with_items:
@@ -19,7 +24,7 @@
   - gitlab-runner__etc_gitlab-runner
   tags: ['docker_gitlab-runner']
 
-- name: 'gitlab-runner | register to gitlab'
+- name: gitlab-runner | register to gitlab
   uri:
     url: 'https://{{ gitlab_domain }}/api/v4/runners'
     method: POST
@@ -33,7 +38,7 @@
   - 'gitlab_runner_register_token is defined'
   tags: ['docker_gitlab-runner']
 
-- name: 'gitlab-runner | configure config.toml'
+- name: gitlab-runner | configure config.toml
   copy:
     dest: '/var/lib/docker/volumes/gitlab-runner__etc_gitlab-runner/_data/config.toml'
     mode: '0600'
@@ -65,7 +70,7 @@
   - 'register_gitlab_runner_register.json.token is defined'
   tags: ['docker_gitlab-runner']
 
-- name: 'gitab-runner | configure cron garbage in dind'
+- name: gitab-runner | configure cron garbage in dind
   cron:
     name: "gitlab_runner_garbage"
     minute: "50"
@@ -73,7 +78,7 @@
     job: "/usr/bin/docker exec docker docker system prune -f; /usr/bin/docker exec docker docker volume prune -f 2>&1 |logger -t gitlab-runner"
   tags: ['docker_gitlab-runner']
 
-- name: 'gitab-runner | purge dind cache'
+- name: gitab-runner | purge dind cache
   cron:
     name: "purge_dind_ci_cache"
     minute: "30"
