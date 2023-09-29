@@ -1,0 +1,52 @@
+version: '3.7'
+
+networks:
+  gitlab-runner:
+    external: true
+
+volumes:
+  gitlab-runner-dind__var_lib_docker:
+    external: true
+  gitlab-runner-dind__certs:
+    external: true
+  gitlab-runner__home_gitlab-runner:
+    external: true
+  gitlab-runner__etc_gitlab-runner:
+    external: true
+
+services:
+  gitlab-runner:
+    image: gitlab/gitlab-runner:{{ gitlab_runner_version | default("latest") }}
+    container_name: gitlab-runner
+    restart: unless-stopped
+    environment:
+      DOCKER_HOST: tcp://docker:2376/
+      DOCKER_TLS_CERTDIR: "/certs"
+      DOCKER_DRIVER: overlay2
+    volumes:
+      - gitlab-runner__etc_gitlab-runner:/etc/gitlab-runner
+      - gitlab-runner__home_gitlab-runner:/home/gitlab-runner
+      - gitlab-runner-dind__certs:/certs
+    networks:
+     - gitlab-runner
+    links:
+      - docker:gitlab-runner
+    logging:
+      driver: syslog
+      options:
+        tag: docker_gitlab-runner
+
+  docker:
+    image: {{ gitlab_runner_dind_version | default("latest") }}
+    container_name: docker
+    restart: unless-stopped
+    privileged: yes
+    volumes:
+      - gitlab-runner-dind__var_lib_docker:/var/lib/docker
+      - gitlab-runner-dind__certs:/certs
+    networks:
+     - gitlab-runner
+    logging:
+      driver: syslog
+      options:
+        tag: docker_gitlab-runner
