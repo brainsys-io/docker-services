@@ -43,7 +43,7 @@
     dest: '/var/lib/docker/volumes/gitlab-runner__etc_gitlab-runner/_data/config.toml'
     mode: '0600'
     content: |
-      concurrent = "{{ (ansible_processor_cores * ansible_processor_count)|int }}"
+      concurrent = {{ (ansible_processor_cores * ansible_processor_count)|int }}
       check_interval = 0
 
       [session_server]
