@@ -23,7 +23,7 @@ services:
     restart: 'unless-stopped'
     labels:
       traefik.enable: "true"
-{% if gitlab_registry is sameas true %}
+{% if gitlab_registry_domain is defined %}
       traefik.http.routers.gitlab.rule: "Host(`{{ gitlab_domain }}`) || Host(`{{ gitlab_registry_domain }}`)"
 {% else %}
       traefik.http.routers.gitlab.rule: "Host(`{{ gitlab_domain }}`)"
