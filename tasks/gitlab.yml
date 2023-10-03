@@ -3,8 +3,8 @@
   assert:
     that:
       - gitlab_domain is defined
-      - gitlab_registry_domain
-      - gitlab_root_password
+      - gitlab_registry_domain is defined
+      - gitlab_root_password is defined
   tags: ['docker_gitlab']
 
 - include_tasks: base.yml
