@@ -14,7 +14,7 @@ services:
     image: weejewel/wg-easy:{{ wireguard_version | default("latest") }}
     restart: unless-stopped
     ports:
-      - "51820:51820/udp"
+      - "{{ wireguard_port | default("51820") }}:51820/udp"
 	volumes:
 	  - 'wireguard__etc_wireguard:/etc/wireguard'
 	cap_add:
