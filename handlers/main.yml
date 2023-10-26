@@ -48,9 +48,16 @@
   ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_gitlab']
 
-- name: 'gitlab-runner-restart'
+- name: gitlab-runner-restart
   systemd:
     name: docker-compose@gitlab-runner
     state: restarted
   ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_gitlab-runner']
+
+- name: wireguard-restart
+  systemd:
+    name: docker-compose@wireguard
+    state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: ['docker_wireguard']

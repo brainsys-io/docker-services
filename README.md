@@ -21,6 +21,7 @@ Available services
   - cadvisor
   - Redisinsight
   - Gitlab
+  - [Wireguard](https://github.com/wg-easy/wg-easy)
 
 Role variables
 ---------------
@@ -57,6 +58,7 @@ Example variables
     - cadvisor
     - redisinsight
     - gitlab
+    - wireguard
 
   traefik_domain: 'example.com'
   traefik_letsencrypt_email: 'cert@example.com'
@@ -66,14 +68,19 @@ Example variables
 
   redisinsight_domain: 'redisinsight.example.com'
   redisinsight_whitelist:
-	- 192.168.1.0/24
-	- 31.15.24.XX
-	- 37.58.179.XX
+    - 192.168.1.0/24
+    - 31.15.24.XX
+    - 37.58.179.XX
 
   gitlab_version: 'latest'
   gitlab_root_password: 'vault-this-thingy'
   gitlab_domain: gitlab.example.com
   gitlab_registry_domain: registry.example.com
+
+  wireguard_version: 'latest'
+  # wg-easy webui access:
+  wireguard_domain: 'wg.example.com'
+  wireguard_password: 'please-vault-this-too'
 ```
 
 TODO
@@ -93,8 +100,6 @@ TODO
 - Loki
   - needs to be implemented
 - Promtail
-  - needs to be implemented
-- Gitlab
   - needs to be implemented
 
 License

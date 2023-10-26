@@ -1,0 +1,16 @@
+---
+- name: wireguard | check vars are defined
+  assert:
+    that:
+      - wireguard_domain is defined
+  tags: ['docker_wireguard']
+
+- include_tasks: base.yml
+  tags: ['docker_wireguard']
+
+- name: 'wireguard | create docker volumes'
+  docker_volume:
+    name: '{{ item }}'
+  with_items:
+    - 'wireguard__etc_wireguard'
+  tags: ['docker_wireguard']
