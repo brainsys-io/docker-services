@@ -16,6 +16,7 @@ gitlab_external_url: 'https://{{ gitlab_domain }}'
 gitlab_shell_ssh_port: 2221
 gitlab_ports:
   - '{{ gitlab_shell_ssh_port }}:22'
+gitlab_entrypoints: websecure
 gitlab_smtp_from_name: Gitlab
 gitlab_smtp_authentication: false
 gitlab_smtp_openssl_verify_mode: none
