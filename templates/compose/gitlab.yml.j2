@@ -23,6 +23,21 @@ services:
     restart: 'unless-stopped'
     labels:
       traefik.enable: "true"
+{% if gitlab_headers_accesscontrolallowcredentials is defined %}
+      traefik.http.middlewares.gitlab.headers.accesscontrolallowcredentials: "{{ gitlab_headers_accesscontrolallowcredentials }}"
+{% endif %}
+{% if gitlab_headers_accesscontrolallowheaders is defined %}
+      traefik.http.middlewares.gitlab.headers.accesscontrolallowheaders: "{{ gitlab_headers_accesscontrolallowheaders }}"
+{% endif %}
+{% if gitlab_headers_accesscontrolallowmethods is defined %}
+      traefik.http.middlewares.gitlab.headers.accesscontrolallowmethods: "{{ gitlab_headers_accesscontrolallowmethods }}"
+{% endif %}
+{% if gitlab_headers_accesscontrolalloworiginlist is defined %}
+      traefik.http.middlewares.gitlab.headers.accesscontrolalloworiginlist: "{{ gitlab_headers_accesscontrolalloworiginlist }}"
+{% endif %}
+{% if gitlab_headers_accesscontrolmaxage is defined %}
+      traefik.http.middlewares.gitlab.headers.accesscontrolmaxage: "{{ gitlab_headers_accesscontrolmaxage }}"
+{% endif %}
 {% if gitlab_registry_domain is defined %}
       traefik.http.routers.gitlab.rule: "Host(`{{ gitlab_domain }}`) || Host(`{{ gitlab_registry_domain }}`)"
 {% else %}
@@ -30,9 +45,9 @@ services:
 {% endif %}
       traefik.http.routers.gitlab.tls: true
       traefik.http.routers.gitlab.tls.certresolver: "letsencrypt"
-      traefik.http.routers.gitlab.entrypoints: "websecure"
+      traefik.http.routers.gitlab.entrypoints: "{{ gitlab_entrypoints }}"
 {% if gitlab_ipwhitelist is defined %}
-      traefik.http.routers.gitlab.middlewares: "clientips@docker"
+      traefik.http.routers.gitlab.middlewares: "{{ gitlab_middlewares }}"
 {% endif %}
       traefik.http.services.gitlab.loadbalancer.server.port: "80"
     cap_add:
