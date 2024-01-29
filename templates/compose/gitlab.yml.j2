@@ -47,7 +47,7 @@ services:
       traefik.http.routers.gitlab.tls.certresolver: "letsencrypt"
       traefik.http.routers.gitlab.entrypoints: "{{ gitlab_entrypoints }}"
 {% if gitlab_ipwhitelist is defined %}
-      traefik.http.routers.gitlab.middlewares: "{{ gitlab_middlewares }}"
+      traefik.http.routers.gitlab.middlewares: "clientips@docker"
 {% endif %}
       traefik.http.services.gitlab.loadbalancer.server.port: "80"
     cap_add:
