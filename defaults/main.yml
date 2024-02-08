@@ -33,6 +33,7 @@ gitlab_redis_exporter: false
 gitlab_postgres_exporter: false
 gitlab_gitlab_exporter: false
 gitlab_node_exporter: false
+gitlab_backup_cron_skip: ''
 gitlab_omnibus_config: |-
   external_url '{{ gitlab_external_url }}'
   nginx['listen_port'] = 80
