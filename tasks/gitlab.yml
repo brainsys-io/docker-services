@@ -41,7 +41,7 @@
 - name: 'gitlab : define cronjob backup'
   cron:
     name: 'docker_gitlab_backup'
-    job: '/usr/bin/docker exec -t gitlab gitlab-backup create SKIP=artifacts CRON=1 2>&1 | /usr/bin/logger -t docker_gitlab'
+    job: '/usr/bin/docker exec -t gitlab gitlab-backup create {{ gitlab_backup_cron_skip }} CRON=1 2>&1 | /usr/bin/logger -t docker_gitlab'
     minute: '{{ gitlab_backup_cron.minute | default(omit) }}'
     hour: '{{ gitlab_backup_cron.hour | default(omit) }}'
     day: '{{ gitlab_backup_cron.day | default(omit) }}'
