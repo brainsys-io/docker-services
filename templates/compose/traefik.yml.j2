@@ -39,6 +39,7 @@ services:
 {% endif %}
       traefik.http.middlewares.auth.basicauth.users: "ludal:$$apr1$$N3vklVTY$$zrq2kwkaVdynGlakyb4J7."
       traefik.http.middlewares.auth.basicauth.realm: {{ traefik_domain }} - restricted access
+      com.centurylinklabs.watchtower.enable: {{ traefik_watchtower_enable | default('false') }}
     logging:
       driver: syslog
       options:

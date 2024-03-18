@@ -32,6 +32,7 @@ services:
       traefik.http.routers.redisinsight-auth.entrypoints: "websecure"
       traefik.http.routers.redisinsight-auth.tls.certresolver: "letsencrypt"
       traefik.http.routers.redisinsight-auth.middlewares: "basicauth@file"
+      com.centurylinklabs.watchtower.enable: {{ redisinsight_watchtower_enable | default('true') }}
 {% endif %}
     networks:
      - traefik

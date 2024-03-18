@@ -60,9 +60,12 @@ Example variables
     - gitlab
     - wireguard
 
+  watchtower_label_enable: true
+
   traefik_domain: 'example.com'
   traefik_letsencrypt_email: 'cert@example.com'
   traefik_ipwhitelist: '42.42.42.42/32, 192.168.1.0/24, 127.0.0.1/32'
+  traefik_watchtower_enable: true
 
   maildev_domain: 'maildev.example.com'
 
@@ -71,11 +74,13 @@ Example variables
     - 192.168.1.0/24
     - 31.15.24.XX
     - 37.58.179.XX
+  redisinsignt_watchtower_enable: true
 
   gitlab_version: 'latest'
   gitlab_root_password: 'vault-this-thingy'
   gitlab_domain: gitlab.example.com
   gitlab_registry_domain: registry.example.com
+  gitlab_watchtower_enable: false
 
   wireguard_version: 'latest'
   # wg-easy webui access:

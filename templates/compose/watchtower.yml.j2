@@ -20,3 +20,4 @@ services:
       WATCHTOWER_HTTP_API_METRICS: "{{ watchtower_http_api_metrics }}"
       WATCHTOWER_HTTP_API_TOKEN: "{{ watchtower_http_api_token | default('changeme_') }}"
 {% endif %}
+      WATCHTOWER_LABEL_ENABLE: "{{ watchtower_label_enable | default('true') }}"

@@ -23,6 +23,8 @@ services:
       DOCKER_HOST: tcp://docker:2376/
       DOCKER_TLS_CERTDIR: "/certs"
       DOCKER_DRIVER: overlay2
+    labels:
+      com.centurylinklabs.watchtower.enable: {{ gitlab_runner_watchtower_enable | default('true') }}
     volumes:
       - gitlab-runner__etc_gitlab-runner:/etc/gitlab-runner
       - gitlab-runner__home_gitlab-runner:/home/gitlab-runner

@@ -33,6 +33,7 @@ services:
       traefik.http.routers.grafana.middlewares: "clientips@docker"
 {% endif %}
       traefik.http.services.grafana.loadbalancer.server.port: 3000
+      com.centurylinklabs.watchtower.enable: {{ grafana_watchtower_enable | default('true') }}
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: "{{ grafana_auth_anonymous_enabled|string|lower }}"
       GF_AUTH_ANONYMOUS_ORG_ROLE: "{{ grafana_auth_anonymous_org_role }}"

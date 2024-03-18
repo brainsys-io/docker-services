@@ -23,5 +23,6 @@ services:
       traefik.http.routers.maildev.middlewares: "clientips@docker"
 {% endif %}
       traefik.http.services.maildev.loadbalancer.server.port: 1080
+      com.centurylinklabs.watchtower.enable: {{ maildev_watchtower_enable | default('true') }}
     networks:
       - traefik

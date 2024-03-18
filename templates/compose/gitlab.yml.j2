@@ -50,6 +50,7 @@ services:
       traefik.http.routers.gitlab.middlewares: "clientips@docker"
 {% endif %}
       traefik.http.services.gitlab.loadbalancer.server.port: "80"
+      com.centurylinklabs.watchtower.enable: {{ gitlab_watchtower_enable | default('true') }}
     cap_add:
       - SYS_ADMIN
     environment:
