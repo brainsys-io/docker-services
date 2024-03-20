@@ -80,10 +80,10 @@
     job: "/usr/bin/docker exec docker docker system prune -f; /usr/bin/docker exec docker docker volume prune -f 2>&1 |logger -t gitlab-runner"
   tags: ['docker_gitlab-runner']
 
-- name: gitab-runner | purge dind cache
-  cron:
-    name: "purge_dind_ci_cache"
-    minute: "30"
-    hour: "04"
-    job: "/usr/bin/docker exec -t docker /usr/bin/find /cache -mindepth 1 -mtime +7 -delete 2>&1 |logger -t gitlab-runner"
-  tags: ['docker_gitlab-runner']
+# - name: gitab-runner | purge dind cache
+#   cron:
+#     name: "purge_dind_ci_cache"
+#     minute: "30"
+#     hour: "04"
+#     job: "/usr/bin/docker exec -t docker /usr/bin/find /cache -mindepth 1 -mtime +7 -delete 2>&1 |logger -t gitlab-runner"
+#   tags: ['docker_gitlab-runner']
