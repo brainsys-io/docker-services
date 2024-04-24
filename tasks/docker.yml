@@ -19,10 +19,11 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
+      - python3-docker
     state: present
   tags: ['docker']
 
-- name: create docker-compose directory 
+- name: create docker-compose directory
   file:
     path: /opt/docker-compose
     state: directory
