@@ -1,0 +1,39 @@
+---
+- name: wikijs | check vars are defined
+  assert:
+    that:
+      - wikijs_domain is defined
+      - wikijs_db_root_password is defined
+      - wikijs_db_name is defined
+      - wikijs_db_user is defined
+      - wikijs_db_password is defined
+  tags: ['docker_wikijs']
+
+- include_tasks: base.yml
+  tags: ['docker_wikijs']
+
+- name: wikijs | copy env file
+  template:
+    src: env/wikijs.yml.j2
+    dest: /opt/docker-compose/wikijs/.env
+    owner: root
+    group: root
+    mode: 0644
+  notify: wikijs-restart
+  tags: [ 'docker_wikijs' ]
+
+- name: wikijs | create docker network
+  docker_network:
+    name: 'wikijs'
+  tags:
+    - wikijs
+  tags: ['docker_wikijs']
+
+- name: wikijs | create docker volumes
+  docker_volume:
+    name: "{{ item }}"
+  with_items:
+    - wikijs__config
+    - wikijs__data
+    - wikijs_db__var_lib_mysql
+  tags: ['docker_wikijs']

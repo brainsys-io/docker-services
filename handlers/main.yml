@@ -61,3 +61,10 @@
     state: restarted
   ignore_errors: '{{ ansible_check_mode }}'
   tags: ['docker_wireguard']
+
+- name: wikijs-restart
+  systemd:
+    name: docker-compose@wikijs
+    state: restarted
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: ['docker_wikijs']

@@ -22,6 +22,7 @@ Available services
   - Redisinsight
   - Gitlab
   - [Wireguard](https://github.com/wg-easy/wg-easy)
+  - wikiJS
 
 Role variables
 ---------------
@@ -59,6 +60,7 @@ Example variables
     - redisinsight
     - gitlab
     - wireguard
+    - wikijs
 
   watchtower_label_enable: true
 
@@ -72,8 +74,7 @@ Example variables
   redisinsight_domain: 'redisinsight.example.com'
   redisinsight_whitelist:
     - 192.168.1.0/24
-    - 31.15.24.XX
-    - 37.58.179.XX
+    - 10.0.1.0/24
   redisinsignt_watchtower_enable: true
 
   gitlab_version: 'latest'
@@ -86,6 +87,15 @@ Example variables
   # wg-easy webui access:
   wireguard_domain: 'wg.example.com'
   wireguard_password: 'please-vault-this-too'
+
+  wikijs_domain: 'wikijs.example.com'
+  wikijs_whitelist:
+  - 192.168.1.0/24
+  - 10.0.1.0/24
+  wikijs_db_root_password: 'vault-this-thingy'
+  wikijs_db_name: db_example
+  wikijs_db_user: db_user
+  wikijs_db_password: 'please-vault-this-too'
 ```
 
 TODO

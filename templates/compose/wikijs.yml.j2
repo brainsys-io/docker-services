@@ -1,0 +1,64 @@
+networks:
+  traefik:
+    external: true
+  wikijs:
+    external: true
+
+volumes:
+  wikijs__config:
+    external: true
+  wikijs__data:
+    external: true
+  wikijs_db__var_lib_mysql:
+    external: true
+
+services:
+  wikijs_db:
+    image: mariadb:latest
+    container_name: wikijs_db
+    restart: always
+    networks:
+      - wikijs
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - wikijs_db__var_lib_mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$DB_NAME
+      - MYSQL_USER=$DB_USER
+      - MYSQL_PASSWORD=$DB_PASSWORD
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  wikijs:
+    image: lscr.io/linuxserver/wikijs:latest
+    container_name: wikijs
+    restart: unless-stopped
+    depends_on:
+      - wikijs_db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - DB_TYPE=mysql
+      - DB_HOST=$DB_HOST
+      - DB_PORT=$DB_PORT
+      - DB_NAME=$DB_NAME
+      - DB_USER=$DB_USER
+      - DB_PASS=$DB_PASSWORD
+    volumes:
+      - wikijs__config:/config
+      - wikijs__data:/data
+    ports:
+      - 3001:3000
+    networks:
+      - wikijs
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik
+      traefik.http.routers.wikijs.rule: "Host(`{{ wikijs_domain }}`){% if wikijs_whitelist is defined %} && ClientIP({% for ip in wikijs_whitelist %}`{{ ip }}`,{% endfor %}){% endif %}"
+      traefik.http.routers.wikijs.tls: true
+      traefik.http.routers.wikijs.tls.certresolver: letsencrypt
+      traefik.http.routers.wikijs.entrypoints: "websecure"
+      com.centurylinklabs.watchtower.enable: true
