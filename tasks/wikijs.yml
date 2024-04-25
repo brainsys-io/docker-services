@@ -14,7 +14,7 @@
 
 - name: wikijs | copy env file
   template:
-    src: env/wikijs.yml.j2
+    src: env/wikijs.env.j2
     dest: /opt/docker-compose/wikijs/.env
     owner: root
     group: root
