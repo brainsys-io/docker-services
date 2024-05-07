@@ -57,8 +57,7 @@ services:
     labels:
       traefik.enable: true
       traefik.docker.network: traefik
-      #traefik.http.routers.wikijs.rule: "Host(`{{ wikijs_domain }}`){% if wikijs_whitelist is defined %} && ClientIP({% for ip in wikijs_whitelist %}`{{ ip }}`,{% endfor %}){% endif %}"
-      traefik.http.routers.wikijs.rule: "Host(`{{ wikijs_domain }}`){% if wikijs_whitelist is defined %} && ({% for ip in wikijs_whitelist %}{% if not loop.last %}ClientIP(`{{ ip }}`) ||{%else}ClientIP(`{{ ip }}`){% endif %}{% endfor %}){% endif %}"
+      traefik.http.routers.wikijs.rule: "Host(`{{ wikijs_domain }}`){% if wikijs_whitelist is defined %} && ({% for ip in wikijs_whitelist %}{% if not loop.last %}ClientIP(`{{ ip }}`) || {% else %}ClientIP(`{{ ip }}`){% endif %}{% endfor %}){% endif %}"
       traefik.http.routers.wikijs.tls: true
       traefik.http.routers.wikijs.tls.certresolver: letsencrypt
       traefik.http.routers.wikijs.entrypoints: "websecure"

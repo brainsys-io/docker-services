@@ -19,7 +19,7 @@ services:
     labels:
       traefik.enable: "true"
       ## IP
-      traefik.http.routers.redisinsight.rule: "Host(`{{ redisinsight_domain }}`){% if redisinsight_whitelist is defined %} && ClientIP({% for ip in redisinsight_whitelist %}`{{ ip }}`,{% endfor %}){% endif %}"
+      traefik.http.routers.redisinsight.rule: "Host(`{{ redisinsight_domain }}`){% if redisinsight_whitelist is defined %} && ({% for ip in redisinsight_whitelist %}{% if not loop.last %}ClientIP(`{{ ip }}`) || {% else %}ClientIP(`{{ ip }}`){% endif %}{% endfor %}){% endif %}"
       traefik.http.routers.redisinsight.entrypoints: "websecure"
       traefik.http.routers.redisinsight.tls.certresolver: "letsencrypt"
       traefik.http.services.redisinsight.loadbalancer.server.port: "5000"
