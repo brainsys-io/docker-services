@@ -8,9 +8,9 @@ services:
     command:
       - "--housekeeping_interval=30s"
       - "--docker_only=true"
-      - "--disable_metrics=percpu,sched,tcp,udp,disk,diskIO,accelerator,hugetlb,referenced_memory,cpu_topology,resctrl"
+      - "--disable_metrics=percpu,sched,tcp,udp,disk,diskIO,hugetlb,referenced_memory,cpu_topology,resctrl"
     ports:
-      - {{ cadvisor_port | default("8080") }}:{{ cadvisor_port | default("8080") }}
+      - {{ cadvisor_port | default("8080") }}:{{ cadvisor_port | default("8080") }}
     labels:
       com.centurylinklabs.watchtower.enable: {{ cadvisor_watchtower_enable | default('true') }}
     volumes:
