@@ -22,7 +22,7 @@ services:
     container_name: gitlab
     restart: 'unless-stopped'
     labels:
-{% if gitlab_through_traefik == "true" %}
+{% if gitlab_through_traefik is defined and gitlab_through_traefik %}
       traefik.enable: "true"
 {% if gitlab_headers_accesscontrolallowcredentials is defined %}
       traefik.http.middlewares.gitlab.headers.accesscontrolallowcredentials: "{{ gitlab_headers_accesscontrolallowcredentials }}"
