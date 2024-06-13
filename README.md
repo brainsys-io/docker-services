@@ -77,6 +77,7 @@ Example variables
     - 10.0.1.0/24
   redisinsignt_watchtower_enable: true
 
+  gitlab_image: gitlab/gitlab-ce
   gitlab_version: 'latest'
   gitlab_root_password: 'vault-this-thingy'
   gitlab_domain: gitlab.example.com
