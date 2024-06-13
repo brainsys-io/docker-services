@@ -33,3 +33,8 @@ certificatesResolvers:
       email: {{ traefik_letsencrypt_email }}
       storage: /letsencrypt/acme.json
       tlschallenge: true
+
+providers:
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true

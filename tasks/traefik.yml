@@ -14,13 +14,13 @@
     name: 'traefik'
   tags: ['docker_traefik']
 
-- name: traefik | create letsencrypt docker volume
+- name: traefik | create letsencrypt docker volume
   docker_volume:
     name: traefik__letsencrypt
   register: register_docker_volume_traefik__letsencrypt
   tags: ['docker_traefik']
 
-- name: traefik | create config docker volume
+- name: traefik | create config docker volume
   docker_volume:
     name: traefik__etc_traefik
   register: register_docker_volume_traefik__etc_traefik
@@ -34,4 +34,11 @@
     group: root
     mode: 0644
   notify: traefik-restart
+  tags: ['docker_traefik']
+
+- name: traefik | create dynamic config path
+  file:
+    path: /var/lib/docker/volumes/traefik__etc_traefik/_data/dynamic
+    state: directory
+    mode: '0755'
   tags: ['docker_traefik']
