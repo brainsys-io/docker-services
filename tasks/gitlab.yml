@@ -3,7 +3,6 @@
   assert:
     that:
       - gitlab_domain is defined
-      - gitlab_registry_domain is defined
       - gitlab_root_password is defined
   tags: ['docker_gitlab']
 
