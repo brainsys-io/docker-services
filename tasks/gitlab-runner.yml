@@ -3,7 +3,6 @@
   assert:
     that:
       - gitlab_domain is defined
-      - gitlab_runner_register_token is defined
   tags: ['docker_gitlab-runner']
 
 - include_tasks: base.yml
