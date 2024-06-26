@@ -49,6 +49,11 @@ services:
     volumes:
       - wikijs__config:/config
       - wikijs__data:/data
+{% if wikijs_custom_css is defined %}
+{% for file in wikijs_custom_css %}
+      - ./custom/css/{{ file }}:/app/wiki/assets/css/{{ file }}:ro
+{% endfor %}
+{% endif %}
     ports:
       - 3001:3000
     networks:

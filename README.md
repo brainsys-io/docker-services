@@ -98,6 +98,8 @@ Example variables
   wikijs_db_name: db_example
   wikijs_db_user: db_user
   wikijs_db_password: 'please-vault-this-too'
+  wikijs_custom_css:
+  - custom.css
 ```
 
 TODO
