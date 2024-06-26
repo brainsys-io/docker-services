@@ -37,3 +37,14 @@
     - wikijs__data
     - wikijs_db__var_lib_mysql
   tags: ['docker_wikijs']
+
+- name: wikijs | create custom CSS path
+  file:
+    path: /opt/docker-compose/wikijs/custom/css
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  when:
+    - wikijs_custom_css is defined 
+  tags: ['docker_wikijs']
