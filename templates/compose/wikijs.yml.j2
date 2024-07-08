@@ -55,7 +55,7 @@ services:
 {% endfor %}
 {% endif %}
     ports:
-      - 3001:3000
+      - {{ wikijs_port | default("3000") }}:3000
     networks:
       - wikijs
       - traefik
