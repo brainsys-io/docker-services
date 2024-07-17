@@ -23,26 +23,12 @@
   - gitlab-runner__etc_gitlab-runner
   tags: ['docker_gitlab-runner']
 
-- name: gitlab-runner | register to gitlab
-  uri:
-    url: 'https://{{ gitlab_domain }}/api/v4/runners'
-    method: POST
-    body:
-      token: '{{ gitlab_runner_register_token }}'
-      description: '{{ inventory_hostname }}'
-    status_code: 201
-    body_format: json
-  register: register_gitlab_runner_register
-  when:
-  - 'gitlab_runner_register_token is defined'
-  tags: ['docker_gitlab-runner']
-
 - name: gitlab-runner | configure config.toml
   copy:
     dest: '/var/lib/docker/volumes/gitlab-runner__etc_gitlab-runner/_data/config.toml'
     mode: '0600'
     content: |
-      concurrent = {{ (ansible_processor_cores * ansible_processor_count)|int }}
+      concurrent = {{ gitlab_runner_concurrent | default(1) | int }}
       check_interval = 0
 
       [session_server]
@@ -51,24 +37,26 @@
       [[runners]]
         name = "{{ inventory_hostname }}"
         url = "https://{{ gitlab_domain }}/"
-        token = "{{ register_gitlab_runner_register.json.token }}"
+      {% if gitlab_runner_register_token is defined %}
+        token = "{{ gitlab_runner_register_token }}"
+      {% endif %}
         executor = "docker"
         [runners.docker]
           host = "tcp://docker:2376/"
           tls_cert_path = "/certs/client"
-          tls_verify = true
-          image = "debian:stable-slim"
-          privileged = true
-          disable_entrypoint_overwrite = false
-          oom_kill_disable = false
-          disable_cache = false
+          tls_verify = {{ gitlab_runner_tls_verify | default("true") }}
+          image = "{{ gitlab_runner_image | default('debian:stable-slim') }}"
+          privileged = {{ gitlab_runner_privileged | default("true") }}
+          disable_entrypoint_overwrite = {{ gitlab_runner_disable_entrypoint_overwrite | default("false") }}
+          oom_kill_disable = {{ gitlab_runner_oom_kill_disable | default("false") }}
+          disable_cache = {{ gitlab_runner_disable_cache | default("false") }}
           volumes = ["/certs/client", "/var/run/docker.sock:/var/run/docker.sock:rw", "/cache:/cache", "/builds:/builds"]
           shm_size = 0
           pull_policy = ["always", "if-not-present"]
+      {% if gitlab_runner_extra_hosts is defined %}
+          extra_hosts = [{% for host in gitlab_runner_extra_hosts %}"{{ host }}"{{ ", " if not loop.last else "" }}{% endfor %}]
+      {% endif %}
   notify: 'gitlab-runner-restart'
-  when:
-  - 'gitlab_runner_register_token is defined'
-  - 'register_gitlab_runner_register.json.token is defined'
   tags: ['docker_gitlab-runner']
 
 - name: gitab-runner | configure cron garbage in dind
