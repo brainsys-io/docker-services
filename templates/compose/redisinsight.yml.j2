@@ -10,7 +10,7 @@ volumes:
 services:
   redisinsight:
     container_name: redisinsight
-    image: git.rznet.fr/docker/redisinsight:latest
+    image: redis/redisinsight:latest
     restart: unless-stopped
     volumes:
       - redisinsight__db:/root/.redisinsight-v2/
