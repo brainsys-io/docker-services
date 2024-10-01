@@ -25,7 +25,7 @@ gitlab_time_zone: Paris
 gitlab_git_max_size: 152428800 # 150.megabytes
 gitlab_git_timeout: 300
 gitlab_backup_retention: 604800  # 7D
-gitlab_backup_cron: { hour: 12, minute: 0 }
+gitlab_backup_cron: { hour: 3, minute: 0 }
 gitlab_prometheus_enable: false
 gitlab_alertmanager_enable: false
 gitlab_grafana_enable: false
